@@ -9,7 +9,7 @@ const CancelToken = axios.CancelToken,
 
 export default ({
 	uri, method, query, data, authorization, gofer, userAgent, accept, timeout,
-	username, password, contentType
+	username, password, contentType, httpsAgent
 }) => {
 	if(!gofer) throw TypeError('No gofer for "error"')
 	var headers = {Accept: accept || 'application/json'},
@@ -38,7 +38,8 @@ export default ({
 		headers,
 		paramsSerializer: query => qs.stringify(query),
 		cancelToken: new CancelToken(c => cancelRequest = c),
-		auth
+		auth,
+		httpsAgent
 	}).then(
 		({status, data, headers}) => {
 			clearTimeout(timeoutId)
