@@ -7,6 +7,9 @@ const CancelToken = axios.CancelToken,
 	CONTENT_TYPE_FORM = 'application/x-www-form-urlencoded',
 	URLENCODED = 'urlEncoded'
 
+export const basicAuth = ({username, password}) =>
+	'Basic ' + (new Buffer(`${username}:${password}`)).toString('base64')
+
 export default ({
 	uri, method, query, data, authorization, gofer, userAgent, accept, timeout,
 	username, password, contentType, httpsAgent

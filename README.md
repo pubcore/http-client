@@ -36,6 +36,7 @@
     ✓ returns 4xx or 5xx as usual (this is expected, not an exception)
     ✓ throws TypeError, if no gofer is provided for error handling
     ✓ has "authorization" argument to forward authentication
+	✓ exports function to create basic-auth value for "authorization" agrument
     ✓ has usernaame, password arguments for basic authentication
     ✓ has userAgent argument to define own one
     ✓ has "data" argument, treated as json (default) for post and put

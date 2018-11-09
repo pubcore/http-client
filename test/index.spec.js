@@ -1,6 +1,6 @@
 import {expect} from 'chai'
 import nock from 'nock'
-import client from '../src/index'
+import client, {basicAuth} from '../src/index'
 
 const body = {foo:'bar'},
 	response = {
@@ -54,6 +54,9 @@ describe('http client (axios based)', () => {
 		client({uri:baseUri + '/ba', gofer, authorization:'Basic Sm9objpEb2U='}).then(
 			({body}) => expect(body).to.deep.equal(body)
 		)
+	)
+	it('exports function to create basic-auth value for "authorization" agrument', () =>
+		expect(basicAuth({username:'foo', password:'bar'})).to.equal('Basic Zm9vOmJhcg==')
 	)
 	it('has usernaame, password arguments for basic authentication', ()=>
 		client({uri:baseUri + '/login', gofer, username:'John', password:'Doe'}).then(
