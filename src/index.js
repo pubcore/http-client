@@ -10,6 +10,8 @@ const CancelToken = axios.CancelToken,
 export const basicAuth = ({username, password}) =>
 	'Basic ' + (new Buffer(`${username}:${password}`)).toString('base64')
 
+axios.defaults.withCredentials = true
+
 export default ({
 	uri, method, query, data, authorization, userAgent, accept, timeout,
 	username, password, contentType, httpsAgent
