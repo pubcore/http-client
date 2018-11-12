@@ -8,45 +8,43 @@
 
 	import request from '@pubcore/http-client'
 
-	const gofer = {
-		error(err){
-			//create user feedback ...
-		}
-	}
-
 	//a get request
-	request({uri:'https://example.com', query:{id: 42}, gofer}).then(
+	request({uri:'https://example.com', query:{id: 42}}).then(
 		result => {
 			//do something with result ...
+		},
+		err => {
+			//do someging with error ...
 		}
 	)
 
 	//post some json, with basic auth
-	request({uri:'https://example.com', method:'post', username:'foo', password:'...', data:{name:'T-Bone'}, query:{id:42}, gofer}).then(
+	request({uri:'https://example.com', method:'post', username:'foo', password:'...', data:{name:'T-Bone'}, query:{id:42}}).then(
 		res => {
 			//show feedback
+		},
+		err => {
+			//do someging with error ...
 		}
 	)
 
 
 #### Features (test descriptions)
+
 	✓ defaults to method get and accept application/json
-    ✓ supports timeout setting
-    ✓ serializes query params by "qs" package default format
-    ✓ returns 4xx or 5xx as usual (this is expected, not an exception)
-    ✓ throws TypeError, if no gofer is provided for error handling
-    ✓ has "authorization" argument to forward authentication
+	✓ rejects to {code:"REQUEST_ERROR", ...}, e.g. on timeout
+	✓ rejects 4xx or 5xx to {code:"HTTP_ERROR", ...} (this is expected, not an exception)
+	✓ serializes query params in "qs" package default format
+	✓ has "authorization" argument to forward authentication
 	✓ exports function to create basic-auth value for "authorization" agrument
-    ✓ has usernaame, password arguments for basic authentication
-    ✓ has userAgent argument to define own one
-    ✓ has "data" argument, treated as json (default) for post and put
-    ✓ has "contentType" argument, if set to "urlEncoded" data is converted accordingly
+	✓ has usernaame, password arguments for basic authentication
+	✓ has userAgent argument to define own one
+	✓ has "data" argument, treated as json (default) for post and put
+	✓ has "contentType" argument, if set to "urlEncoded" data is converted accordingly
 
-#### Error result object, passed to error gofer
+#### rejected error object
 
-The error gofer is only called on errors while initialize the request (e.g. timeout, ssl issues). It is NOT called, if there is a response of server (this is an expected behaviour, for all http status codes, no exception).
-
-Example
+Example if request failed (no response exists)
 
 	{
 		code:'REQUEST_ERROR',
@@ -54,6 +52,20 @@ Example
 			message: 'timeout',
 			uri: 'https://example.com/foo?id=12',
 			method: 'get'
+		}
+	}
+
+Example if request succeeded, but there is a http error (response exists)
+
+	{
+		code:'HTTP_ERROR',
+		details:{
+			body:{status:{code:'ERROR'}},
+			headers:{'content-type': 'application/json'},
+			message:'Request failed with status code 500',
+			status:500,
+			method:'get',
+			uri:'https://www.example.com/500'
 		}
 	}
 

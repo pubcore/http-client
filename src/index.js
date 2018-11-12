@@ -11,10 +11,9 @@ export const basicAuth = ({username, password}) =>
 	'Basic ' + (new Buffer(`${username}:${password}`)).toString('base64')
 
 export default ({
-	uri, method, query, data, authorization, gofer, userAgent, accept, timeout,
+	uri, method, query, data, authorization, userAgent, accept, timeout,
 	username, password, contentType, httpsAgent
 }) => {
-	if(!gofer) throw TypeError('No gofer for "error"')
 	var headers = {Accept: accept || 'application/json'},
 		cancelRequest = () => {},
 		timeoutId = setTimeout(
@@ -51,12 +50,20 @@ export default ({
 		err => {
 			clearTimeout(timeoutId)
 			if(err.response){
-				//response status is >= 300
 				var {status, data, headers} = err.response
-				return {status, body:data, headers}
+				return Promise.reject({
+					code:'HTTP_ERROR',
+					details: {
+						status,
+						body:data,
+						headers,
+						message: err.message,
+						uri: get(err, 'request._currentUrl') || uri,
+						method: get(err, 'config.method') || method || METHOD
+					}
+				})
 			}else{
-				//no response => return nothing, only gofer the error
-				gofer.error({
+				return Promise.reject({
 					code:'REQUEST_ERROR',
 					details: {
 						message: err.message,
