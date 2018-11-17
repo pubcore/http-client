@@ -14,7 +14,7 @@ axios.defaults.withCredentials = true
 
 export default ({
 	uri, method, query, data, authorization, userAgent, accept, timeout,
-	username, password, contentType, httpsAgent
+	username, password, contentType, httpsAgent, stringify
 }) => {
 	var headers = {Accept: accept || 'application/json'},
 		cancelRequest = () => {},
@@ -40,7 +40,7 @@ export default ({
 			qs.stringify(data)
 			:data,
 		headers,
-		paramsSerializer: query => qs.stringify(query),
+		paramsSerializer: stringify || (query => qs.stringify(query)),
 		cancelToken: new CancelToken(c => cancelRequest = c),
 		auth,
 		httpsAgent
