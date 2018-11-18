@@ -40,7 +40,7 @@ export default ({
 			qs.stringify(data)
 			:data,
 		headers,
-		paramsSerializer: stringify || (query => qs.stringify(query)),
+		paramsSerializer:stringify || (query => qs.stringify(query, {encodeValuesOnly:true})),
 		cancelToken: new CancelToken(c => cancelRequest = c),
 		auth,
 		httpsAgent
