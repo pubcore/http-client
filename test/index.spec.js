@@ -21,6 +21,12 @@ nock(baseUri).get('/query').query(
 nock(baseUri).get('/500').reply(500, {status:{code:'ERROR'}})
 nock(baseUri).post('/data', {foo:'bar'}).reply(200, {})
 nock(baseUri).put('/urlencoded', 'foo=bar').reply(200, {})
+nock(baseUri, {reqheaders:{'X-Csrf-Token':'TokenTestValue'}}).post('/csrfToken').reply(200, {})
+
+beforeEach(() => {
+	global.document = {}
+	global.document.cookie = 'Csrf-Token=TokenTestValue; SomeOther=XY=Z'
+})
 
 describe('http client (axios based)', () => {
 	it('defaults to method get and accept application/json', () =>
@@ -90,6 +96,11 @@ describe('http client (axios based)', () => {
 	)
 	it('has "contentType" argument, if set to "urlEncoded" data is converted accordingly', () =>
 		client({uri:baseUri + '/urlencoded', method:'put', contentType:'urlEncoded', data:{foo:'bar'}}).then(
+			({status}) => expect(status).to.equal(200)
+		)
+	)
+	it('"Csrf-Token" cookie is forwarded via HTTP header "X-Csrf-Token" for POST, PUT and DELETE requests', () =>
+		client({uri:baseUri + '/csrfToken', method:'post'}).then(
 			({status}) => expect(status).to.equal(200)
 		)
 	)

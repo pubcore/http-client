@@ -1,6 +1,8 @@
 import axios from 'axios'
 import get from 'lodash.get'
 import qs from 'qs'
+import getCsrfToken from './getCsrfToken'
+
 const CancelToken = axios.CancelToken,
 	TIMEOUT = 30000,
 	METHOD = 'get',
@@ -8,7 +10,7 @@ const CancelToken = axios.CancelToken,
 	URLENCODED = 'urlEncoded'
 
 export const basicAuth = ({username, password}) =>
-	'Basic ' + (new Buffer(`${username}:${password}`)).toString('base64')
+	'Basic ' + (Buffer.from(`${username}:${password}`)).toString('base64')
 
 axios.defaults.withCredentials = true
 
@@ -25,18 +27,28 @@ export default ({
 			},
 			(timeout || TIMEOUT)
 		),
-		auth
+		auth,
+		csrfToken,
+		verb = (method || METHOD).toLowerCase()
 
 	if(authorization !== undefined) headers.Authorization = authorization
 	if(userAgent !== undefined) headers['User-Agent'] = userAgent
+	if(
+		typeof document !== 'undefined'
+		&& ['post', 'put', 'delete'].indexOf(verb) >= 0
+	) {
+
+		csrfToken = getCsrfToken()
+		if(csrfToken) headers['X-Csrf-Token'] = csrfToken
+	}
 	if(username !== undefined || password !== undefined) auth = {username, password}
 
 	return axios({
 		url:uri,
-		method:method || METHOD,
+		method:verb,
 		params:query,
 		data: [CONTENT_TYPE_FORM, URLENCODED].indexOf(contentType) >= 0
-			&& ['post', 'put'].indexOf(method.toLowerCase()) >= 0 ?
+			&& ['post', 'put'].indexOf(verb) >= 0 ?
 			qs.stringify(data)
 			:data,
 		headers,
@@ -61,7 +73,7 @@ export default ({
 						headers,
 						message: err.message,
 						uri: get(err, 'request._currentUrl') || uri,
-						method: get(err, 'config.method') || method || METHOD
+						method: get(err, 'config.method') || verb
 					}
 				})
 			}else{
@@ -70,7 +82,7 @@ export default ({
 					details: {
 						message: err.message,
 						uri: get(err, 'request._currentUrl') || uri,
-						method: get(err, 'config.method') || method || METHOD
+						method: get(err, 'config.method') || verb
 					}
 				})
 			}
