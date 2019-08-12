@@ -19,7 +19,11 @@ nock(baseUri).get('/query').query(
 	{foo: 'bar', nested:{obj:{name:'test'}}}
 ).reply(200, body)
 nock(baseUri).get('/500').reply(500, {status:{code:'ERROR'}})
+nock('http://www.example.com').get('/').reply(200)
 nock(baseUri).post('/data', {foo:'bar'}).reply(200, {})
+nock(baseUri, {
+	reqheaders: {test: 'test'},
+}).post('/data').reply(201)
 nock(baseUri).put('/urlencoded', 'foo=bar').reply(200, {})
 nock(baseUri, {reqheaders:{'X-Csrf-Token':'TokenTestValue'}}).post('/csrfToken').reply(200, {})
 
@@ -92,6 +96,12 @@ describe('http client (axios based)', () => {
 	it('has "data" argument, treated as json (default) for post and put', () =>
 		client({uri:baseUri + '/data', method:'post', data:{foo:'bar'}}).then(
 			({status}) => expect(status).to.equal(200)
+		)
+	)
+	it('test headers', () =>
+		client({uri:baseUri + '/data', method:'post', data:{foo:'bar'},
+			headers:{test:'test'}}).then(
+			({status}) => expect(status).to.equal(201)
 		)
 	)
 	it('has "contentType" argument, if set to "urlEncoded" data is converted accordingly', () =>

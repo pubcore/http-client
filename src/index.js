@@ -16,9 +16,9 @@ axios.defaults.withCredentials = true
 
 export default ({
 	uri, method, query, data, authorization, userAgent, accept, timeout,
-	username, password, contentType, httpsAgent, stringify
+	username, password, contentType, httpsAgent, stringify, headers
 }) => {
-	var headers = {Accept: accept || 'application/json'},
+	var _headers = {...(headers || {}), Accept: accept || 'application/json'},
 		cancelRequest = () => {},
 		timeoutId = setTimeout(
 			() => {
@@ -31,17 +31,20 @@ export default ({
 		csrfToken,
 		verb = (method || METHOD).toLowerCase()
 
-	if(authorization !== undefined) headers.Authorization = authorization
-	if(userAgent !== undefined) headers['User-Agent'] = userAgent
+	if(authorization !== undefined) _headers.Authorization = authorization
+	if(userAgent !== undefined) _headers['User-Agent'] = userAgent
 	if(
 		typeof document !== 'undefined'
 		&& ['post', 'put', 'delete'].indexOf(verb) >= 0
 	) {
 
 		csrfToken = getCsrfToken()
-		if(csrfToken) headers['X-Csrf-Token'] = csrfToken
+		if(csrfToken) _headers['X-Csrf-Token'] = csrfToken
 	}
 	if(username !== undefined || password !== undefined) auth = {username, password}
+
+	//remove it
+	console.log(_headers)
 
 	return axios({
 		url:uri,
@@ -51,7 +54,7 @@ export default ({
 			&& ['post', 'put'].indexOf(verb) >= 0 ?
 			qs.stringify(data)
 			:data,
-		headers,
+		headers:_headers,
 		paramsSerializer:stringify || (query => qs.stringify(query, {encodeValuesOnly:true})),
 		cancelToken: new CancelToken(c => cancelRequest = c),
 		auth,
