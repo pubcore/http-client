@@ -41,6 +41,7 @@
 	✓ has userAgent argument to define own one
 	✓ has "data" argument, treated as json (default) for post and put
 	✓ has "contentType" argument, if set to "urlEncoded" data is converted accordingly
+	✓ supports optional headers
 
 #### rejected error object
 

@@ -98,7 +98,7 @@ describe('http client (axios based)', () => {
 			({status}) => expect(status).to.equal(200)
 		)
 	)
-	it('test headers', () =>
+	it('supports optional headers', () =>
 		client({uri:baseUri + '/data', method:'post', data:{foo:'bar'},
 			headers:{test:'test'}}).then(
 			({status}) => expect(status).to.equal(201)
