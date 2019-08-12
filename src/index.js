@@ -42,10 +42,6 @@ export default ({
 		if(csrfToken) _headers['X-Csrf-Token'] = csrfToken
 	}
 	if(username !== undefined || password !== undefined) auth = {username, password}
-
-	//remove it
-	console.log(_headers)
-
 	return axios({
 		url:uri,
 		method:verb,
