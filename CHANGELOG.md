@@ -1,3 +1,7 @@
+## 2.6.0 2020-09-27
+* add support of "__Host-" cookie prefix for Csrf-Token
+* increase test coverage
+
 ## 2.5.0 2019-10-15
 * add optional "headers" param to set arbitrary HTTP headers
 * add optional "maxRedirect" param
