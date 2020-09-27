@@ -14,7 +14,7 @@ nock(baseUri).get('/ba').basicAuth({user:'John', pass:'Doe'}).reply(200, body)
 nock(baseUri).get('/login').basicAuth({user:'John', pass:'Doe'}).reply(200, body)
 nock(baseUri).get('/resource').reply(200, body)
 nock(baseUri, {reqheaders:{'User-Agent':'my-test'}}).get('/agent').reply(200, body)
-nock(baseUri).get('/timeout').socketDelay(10).reply(200, body)
+nock(baseUri).get('/timeout').delayConnection(10).reply(200, body)
 nock(baseUri).get('/query').query(
 	{foo: 'bar', nested:{obj:{name:'test'}}}
 ).reply(200, body)
