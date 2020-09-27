@@ -1,10 +1,5 @@
 export default () => document && document.cookie && (
-	decodeURIComponent( document.cookie.replace(
-		new RegExp(
-			'(?:(?:^|.*;)\\s*'
-					+ encodeURIComponent('Csrf-Token').replace(/[-.+*]/g, '\\$&')
-					+ '\\s*\\=\\s*([^;]*).*$)|^.*$'
-		),
-		'$1'
-	)) || null
-)
+	decodeURIComponent((document.cookie.match(
+		new RegExp(';?\\s*(__Host\\-)?Csrf\\-Token\\s*\\=\\s*([^;]*)')
+	)||[])[2]||'')
+) || null

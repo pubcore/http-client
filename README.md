@@ -42,6 +42,7 @@
 	✓ has "data" argument, treated as json (default) for post and put
 	✓ has "contentType" argument, if set to "urlEncoded" data is converted accordingly
 	✓ supports optional headers
+	✓ "__Host-Csrf-Token" cookie is forwarded via HTTP header "X-Csrf-Token" for POST, PUT and DELETE requests
 
 #### rejected error object
 
@@ -78,3 +79,7 @@ Example for "json" response:
 		headers: {'Content-Type': 'application/json' //,...}
 		body: {foo: bar}
 	}
+
+#### References
+[CQRS protection](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)
+["__Host-" cookie prefix](https://tools.ietf.org/html/draft-west-cookie-prefixes-05)
