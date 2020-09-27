@@ -27,12 +27,10 @@ nock(baseUri, {
 nock(baseUri).put('/urlencoded', 'foo=bar').reply(200, {})
 nock(baseUri, {reqheaders:{'X-Csrf-Token':'TokenTestValue'}}).post('/csrfToken').reply(200, {})
 
-beforeEach(() => {
-	global.document = {}
-	global.document.cookie = 'Csrf-Token=TokenTestValue; SomeOther=XY=Z'
-})
-
 describe('http client (axios based)', () => {
+	before(() => {
+		global.document = {}
+	})
 	it('defaults to method get and accept application/json', () =>
 		client({uri:baseUri + '/resource'}).then(
 			res => expect(res).to.deep.equal(response)
@@ -109,9 +107,19 @@ describe('http client (axios based)', () => {
 			({status}) => expect(status).to.equal(200)
 		)
 	)
+})
+
+describe('Cross Site Request Forgery (CQRF) protection', () => {
+	before(() => {
+		global.document = {}
+		global.document.cookie = 'Csrf-Token=TokenTestValue; SomeOther=XY=Z'
+	})
 	it('"Csrf-Token" cookie is forwarded via HTTP header "X-Csrf-Token" for POST, PUT and DELETE requests', () =>
 		client({uri:baseUri + '/csrfToken', method:'post'}).then(
 			({status}) => expect(status).to.equal(200)
 		)
 	)
+	after(() => {
+		global.document = {}
+	})
 })

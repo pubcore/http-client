@@ -73,7 +73,7 @@ export default ({
 						headers,
 						message: err.message,
 						uri: get(err, 'request._currentUrl') || uri,
-						method: get(err, 'config.method') || verb
+						method: verb
 					}
 				})
 			}else{
@@ -82,7 +82,7 @@ export default ({
 					details: {
 						message: err.message,
 						uri: get(err, 'request._currentUrl') || uri,
-						method: get(err, 'config.method') || verb
+						method: verb
 					}
 				})
 			}
